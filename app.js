@@ -7,12 +7,15 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const db = require("./db");
 const dishesRouter = require("./routes/dishRoutes");
+const userRouter = require('./routes/userRoutes');
+const bodyParser = require("body-parser");
 
 const app = express();
 
 app.use(morgan("dev"));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.static(`${__dirname}/public`));
+app.use(bodyParser.json());
 
 app.set("jwtkey", process.env.JWT_KEY);
 app.use(cors());
@@ -58,6 +61,7 @@ db.connect();
 
 //3)routes
 app.use("/api/v1/dishes", dishesRouter);
+app.use('/api/v1/users',userRouter);
 
 //4) start server
 const port = 3001;
