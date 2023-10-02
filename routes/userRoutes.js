@@ -31,7 +31,7 @@ const createUser = (req, res) => {
                         if (createdUser) {
                             res.status(201).json({
                                 message: "User added successfully",
-                                postId: createUser._id
+                                postId: createdUser._id
                             });
 
                         } else {

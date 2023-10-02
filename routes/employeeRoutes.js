@@ -1,23 +1,15 @@
 const express = require("express");
-
-const mongoose = require("mongoose");
 const Employee = require("../models/employee");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const jwtkey = process.env.JWT_KEY;
+const { default: mongoose } = require('mongoose');
+
 
 // Require the db.js file to connect to the database
 require("../db");
 
-router.get("/", async (req, res) => {
-  try {
-    const employees = await Employee.find();
-    res.json(employees);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.get("/:id", getEmployee, (req, res) => {
-  res.json(res.employee);
-});
 
 const createEmployee = async (req, res) => {
     const { fullname, address, phoneNumber, phoneNumber2, email, restaurantName, RFC, profilePicture, employeeType, password } = req.body;

@@ -9,51 +9,55 @@ const { default: mongoose } = require('mongoose');
 const createOwner = (req, res) => { 
     const { fullname, address, phoneNumber, phoneNumber2, email, restaurantName, RFC, profilePicture, employeeType, password } = req.body;
     let data = req.body;
-    Owner.exists({ email: data.email }, (err, doc) => {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log("Result :", doc) // true
-            if (doc === null) {
-                bcrypt.hash(data.password, 10, async function (err, hash) { 
 
-                    const owner = new Owner({
-                        fullname: data.fullname,
-                        address: data.address,
-                        phoneNumber: data.phoneNumber,
-                        phoneNumber2: data.phoneNumber2,
-                        email: data.email,
-                        restaurantName: data.restaurantName,
-                        RFC: data.RFC,
-                        profilePicture: data.profilePicture,
-                        employeeType: data.employeeType,
-                        password: hash
-                    })
+    try{
+        Owner.exists({ email: data.email }, (err, doc) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log("Result :", doc) // true
+                if (doc === null) {
+                    bcrypt.hash(data.password, 10, async function (err, hash) { 
 
-                    owner.save().then(createdOwner => {
-                            
-                            console.log(createdOwner._id);
-                            if (createdOwner) {
-                                res.status(201).json({
-                                    message: "Owner added successfully",
-                                    postId: createdOwner._id
-                                });
-    
-                            } else {
-                                res.status(500).json({
-                                    message: "Error saving owner"
-                                });
-                            }
-    
+                        const owner = new Owner({
+                            fullname: data.fullname,
+                            phoneNumber: data.phoneNumber,
+                            phoneNumber2: data.phoneNumber2,
+                            email: data.email,
+                            restaurantName: data.restaurantName,
+                            RFC: data.RFC,
+                            logo: data.logo ? data.logo:'',
+                            mainAddress: data.mainAddress,
+                            password: hash
+                        })
+
+                        owner.save().then(createdOwner => {
+                                
+                                console.log(createdOwner._id);
+                                if (createdOwner) {
+                                    res.status(201).json({
+                                        message: "Owner added successfully",
+                                        postId: createdOwner._id
+                                    });
+        
+                                } else {
+                                    res.status(500).json({
+                                        message: "Error saving owner"
+                                    });
+                                }
+        
+                        })
                     })
-                })
-            }else{
-                    res.status(200).json({
-                        message: "Owner already exists"
-                    });
+                }else{
+                        res.status(200).json({
+                            message: "Owner already exists"
+                        });
+                    }
                 }
-            }
-    });
+        });
+    }catch(err){
+        console.log(err);
+    }
 }
 
 
@@ -158,8 +162,14 @@ router.route('/getAll').get(getAll);
 
 router.route('/:id')
     .get(getOwner)
-    .patch(updateOwner)
-    .patch(updateOwnerPassword)
+    // .patch(updateOwner)
+    // .patch(updateOwnerPassword)
     .delete(deleteOwner);
+
+router.route('/:id/update')
+    .patch(updateOwner);
+
+router.route('/:id/updatePassword')
+    .patch(updateOwnerPassword);
 
 module.exports = router;
