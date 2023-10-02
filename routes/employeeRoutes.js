@@ -14,53 +14,62 @@ require("../db");
 const createEmployee = async (req, res) => {
     const { fullname, address, phoneNumber, phoneNumber2, email, restaurantName, RFC, profilePicture, employeeType, password } = req.body;
     let data = req.body;
-    Employee.exists({ email: data.email }, (err, doc) => {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log("Result :", doc) // true
-            if (doc === null) {
-                bcrypt.hash(data.password, 10, async function (err, hash) {
 
-                    const employee = new Employee({
-                        fullname: data.fullname,
-                        address: data.address,
-                        phoneNumber: data.phoneNumber,
-                        phoneNumber2: data.phoneNumber2,
-                        email: data.email,
-                        restaurantName: data.restaurantName,
-                        RFC: data.RFC,
-                        profilePicture: data.profilePicture,
-                        employeeType: data.employeeType,
-                        password: hash
-                    })
-
-                    employee.save().then(createdEmployee => {
-                            
-                            console.log(createdEmployee._id);
-                            if (createdEmployee) {
-                                res.status(201).json({
-                                    message: "Employee added successfully",
-                                    postId: createdEmployee._id
-                                });
+    try{
+        Employee.exists({ email: data.email }, (err, doc) => {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log("Result :", doc) // true
+                if (doc === null) {
+                    bcrypt.hash(data.password, 10, async function (err, hash) {
     
-                            } else {
-                                res.status(500).json({
-                                    message: "Error saving employee"
-                                });
-                            }
+                        const employee = new Employee({
+                            fullname: data.fullname,
+                            address: data.address,
+                            phoneNumber: data.phoneNumber,
+                            phoneNumber2: data.phoneNumber2,
+                            email: data.email,
+                            restaurantName: data.restaurantName,
+                            RFC: data.RFC,
+                            profilePicture: data.profilePicture,
+                            employeeType: data.employeeType,
+                            password: hash
+                        })
     
+                        employee.save().then(createdEmployee => {
+                                
+                                console.log(createdEmployee._id);
+                                if (createdEmployee) {
+                                    res.status(201).json({
+                                        message: "Employee added successfully",
+                                        postId: createdEmployee._id
+                                    });
+        
+                                } else {
+                                    res.status(500).json({
+                                        message: "Error saving employee"
+                                    });
+                                }
+        
+                        })
                     })
-                })
-            }else{
-                res.status(200).json({
-                    message: "Employee already exists"
-                });
+                }else{
+                    res.status(200).json({
+                        message: "Employee already exists"
+                    });
+                }
+    
             }
+    
+        });
+    }catch(err){
+        res.status(500).json({
+            message: "Error saving employee"
+        });
+    }
 
-        }
-
-    });
+   
 }
 
 
@@ -135,7 +144,7 @@ const authenticate = (req, res) => {
     const updateEmployee = async (req, res) => {
         let data = req.body;
 
-            return Employee.updateOne({ _id: data._id }, {
+            return Employee.updateOne({ _id: req.params.id }, {
                 $set: {
                     fullname: data.fullname,
                     address: data.address,
@@ -158,7 +167,7 @@ const updateEmployeePassword =(req,res)=>{
     let data = req.body;
 
     bcrypt.hash(data.password, 10, async function (err, hash) {
-        return Employee.updateOne({ _id: data._id }, {
+        return Employee.updateOne({ _id: req.params.id }, {
             $set: {
                 password: hash
             }
@@ -193,9 +202,15 @@ router.route('/getAll').get(getAll);
 router
     .route('/:id')
     .get(getEmployee)
-    .patch(updateEmployee)
-    .patch(updateEmployeePassword)
+    // .patch(updateEmployee)
+    // .patch(updateEmployeePassword)
     .delete(deleteEmployee);
+
+router.route('/:id/update')
+    .patch(updateEmployee);
+
+    router.route('/:id/updatePassword')
+    .patch(updateEmployeePassword);
 
 module.exports = router;
 
