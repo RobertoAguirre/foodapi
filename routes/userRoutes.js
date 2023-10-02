@@ -190,10 +190,11 @@ const deleteUser = (req, res) => {
 
     console.log(req.params);
     //const _sku = req.params.id * 1;
-    const id = mongoose.Types.ObjectId(req.params.id);
+
+    const _id = mongoose.Types.ObjectId(req.params.id);
     
 
-    User.findByIdAndRemove(id).then(brands => {
+    User.findByIdAndRemove(_id).then(brands => {
         res.status(200).json({
             message: "User deleted successfully!",
         });
