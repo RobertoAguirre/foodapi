@@ -7,7 +7,6 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const db = require("./db");
 const dishesRouter = require("./routes/dishRoutes");
-const userRouter = require('./routes/userRoutes');
 const ownerRouter = require('./routes/ownerRoutes');
 const employeeRouter = require('./routes/employeeRoutes');
 const bodyParser = require("body-parser");
@@ -63,7 +62,6 @@ db.connect();
 
 //3)routes
 app.use('/api/v1/dishes', dishesRouter);
-app.use('/api/v1/users',userRouter);
 app.use('/api/v1/owners',ownerRouter);
 app.use('/api/v1/employees',employeeRouter);
 
