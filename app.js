@@ -66,7 +66,7 @@ app.use('/api/v1/owners',ownerRouter);
 app.use('/api/v1/employees',employeeRouter);
 
 //4) start server
-const port = 3001;
+const port = 3002;
 app.listen(port, () => {
   console.log(`app running on port ${port}`);
 });
